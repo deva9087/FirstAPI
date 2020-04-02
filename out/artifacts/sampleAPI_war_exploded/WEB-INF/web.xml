@@ -16,6 +16,6 @@
 
     <servlet-mapping>
         <servlet-name>MyServlet</servlet-name>
-        <url-pattern>/server/*</url-pattern>
+        <url-pattern>/Collection/*</url-pattern>
     </servlet-mapping>
 </web-app>
