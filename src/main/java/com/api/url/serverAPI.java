@@ -24,8 +24,7 @@ public class serverAPI {
     MongoDatabase database = mongoClient.getDatabase("kaiburr");
     MongoCollection<Document> collection = database.getCollection("server");
 
-    private JSONArray extractData() {
-        FindIterable<Document> serverColl = collection.find();
+    private JSONArray extractData(FindIterable<Document> serverColl) {
         JSONArray fullJSON = new JSONArray();
         for (Document temp : serverColl) {
             String result = temp.toJson();
@@ -38,8 +37,8 @@ public class serverAPI {
 
     @GET
     public String getAllServersJSON() {
-        System.out.println("getAllJSON");
-        JSONArray fullJSON = extractData();
+        FindIterable<Document> serverColl = collection.find();
+        JSONArray fullJSON = extractData(serverColl);
         return fullJSON.toString();
     }
 
@@ -47,15 +46,7 @@ public class serverAPI {
     @Path("/{id}")
     public String getServerByID(@PathParam("id") String id) {
         FindIterable<Document> serverColl = collection.find(eq("id", id));
-        JSONArray fullJSON = new JSONArray();
-        for (Document temp : serverColl) {
-            String result = temp.toJson();
-            JSONObject json = new JSONObject(result);
-            json.remove("_id");
-            fullJSON.put(json);
-        }
-        System.out.println("fullJSON => " + fullJSON);
-        System.out.println("id => " + id);
+        JSONArray fullJSON = extractData(serverColl);
         return fullJSON.toString();
     }
 
@@ -63,15 +54,7 @@ public class serverAPI {
     @Path("/name/{name}")
     public String getServerByName(@PathParam("name") String name) {
         FindIterable<Document> serverColl = collection.find(eq("name", name));
-        JSONArray fullJSON = new JSONArray();
-        for (Document temp : serverColl) {
-            String result = temp.toJson();
-            JSONObject json = new JSONObject(result);
-            json.remove("_id");
-            fullJSON.put(json);
-        }
-        System.out.println("fullJSON => " + fullJSON);
-        System.out.println("name => " + name);
+        JSONArray fullJSON = extractData(serverColl);
         return fullJSON.toString();
     }
 
@@ -79,10 +62,8 @@ public class serverAPI {
     @Path("/{id}")
     public String deleteServerByID(@PathParam("id") String id) {
         collection.deleteOne(eq("id", id));
-        String newdata = getAllServersJSON();
-        return newdata;
+        return getAllServersJSON();
     }
-
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -99,10 +80,8 @@ public class serverAPI {
         if (count == 0) {
             collection.insertOne(doc);
         }
-        String newdata = getAllServersJSON();
-        return newdata;
+        return getAllServersJSON();
     }
-
 
     @PATCH
     @Consumes(MediaType.APPLICATION_JSON)
@@ -110,7 +89,6 @@ public class serverAPI {
         Document doc = Document.parse(obj);
         String id = doc.getString("id");
         UpdateResult result = collection.updateMany(eq("id", id), new Document("$set", doc));
-        String newdata = getAllServersJSON();
-        return newdata;
+        return getAllServersJSON();
     }
 }
