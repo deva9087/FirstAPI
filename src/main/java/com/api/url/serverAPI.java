@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 
 import static com.mongodb.client.model.Filters.eq;
 
-@Path("test")
+@Path("document")
 @Produces(MediaType.APPLICATION_JSON)
 public class serverAPI {
     MongoClientURI uri = new MongoClientURI("mongodb+srv://Deva:incorrect1@deva-gxfnf.mongodb.net/test?retryWrites=true&w=majority");
